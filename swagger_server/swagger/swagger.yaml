@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: S02 - Responder Encuestas
+  description: API para gestionar las respuestas de los usuarios a encuestas y formularios.
+  version: 1.0.0
+servers:
+- url: http://localhost:5001
+  description: Servidor local para desarrollo
+tags:
+- name: Notifications
+  description: Operaciones relacionadas con las notificaciones.
+paths:
+  /notifications:
+    post:
+      tags:
+      - Notifications
+      summary: Enviar una notificación
+      description: Permite enviar notificaciones relacionadas con respuestas o encuestas.
+      operationId: notifications_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+        required: true
+      responses:
+        "201":
+          description: Notificación enviada correctamente.
+        "400":
+          description: Error en los datos enviados.
+      x-openapi-router-controller: swagger_server.controllers.notifications_controller
+  /notifications/{id}:
+    get:
+      tags:
+      - Notifications
+      summary: Consultar el estado de una notificación
+      description: Devuelve el estado de una notificación enviada anteriormente.
+      operationId: notifications_id_get
+      parameters:
+      - name: id
+        in: path
+        description: ID de la notificación
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Estado de la notificación.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationStatus'
+        "404":
+          description: Notificación no encontrada.
+      x-openapi-router-controller: swagger_server.controllers.notifications_controller
+components:
+  schemas:
+    NotificationRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          example: email
+        recipient:
+          type: string
+          example: user@example.com
+        message:
+          type: string
+          example: Gracias por completar la encuesta.
+    NotificationStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        status:
+          type: string
+          example: sent
+      example:
+        id: 1
+        status: sent
+
